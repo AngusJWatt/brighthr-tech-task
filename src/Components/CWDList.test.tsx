@@ -8,7 +8,7 @@ describe('CWDList', () => {
 
     afterAll(() => {
         cleanup();
-    })
+    });
 
     it('renders a corresponding series of directories when provided with a current working directory list', () => {
         render(<CWDList currentWorkingDirectory={['dir0', 'dir1']} setCurrentWorkingDirectory={jest.fn()} />);

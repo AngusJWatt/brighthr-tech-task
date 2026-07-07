@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ROOT_STRING = 'HOME';
 
 type CWDProps = {
