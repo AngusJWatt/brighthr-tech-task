@@ -15,7 +15,10 @@ describe('DirectoryTable', () => {
         files: [
             { nodeName: 'Public Holiday policy', nodeType: 'pdf', added: '2016-12-06' },
             { nodeName: 'Expenses', nodeType: 'folder', files: [] }
-        ]
+        ],
+        filePath: ['dir0', 'dir1'],
+        openFile: jest.fn(),
+        openDirectory: jest.fn()
     };
 
     it('renders a table with a caption, and headings for name, type, creation date, and a clickable link', () => {
@@ -43,9 +46,23 @@ describe('DirectoryTable', () => {
         expect(folderElements.getAllByRole('cell')[1]).toHaveTextContent('\u2014');
     });
 
-    it.todo('runs a callback when a directory has been clicked with the updated filepath');
+    it('runs a callback when a directory has been clicked with the updated filepath', () => {
+        const mockOpenDirectory = jest.fn();
+        render(<DirectoryTable {...sharedTestProps} openDirectory={mockOpenDirectory} />);
+        const directoryButton = within(screen.getAllByRole('row')[2]).getByRole('button');
+        expect(mockOpenDirectory).not.toHaveBeenCalled();
+        directoryButton.click();
+        expect(mockOpenDirectory).toHaveBeenCalledWith(['dir0', 'dir1', 'Expenses']);
+    });
 
-    it.todo('runs a callback when a file has been clicked to open the file contents');
+    it('runs a callback when a file has been clicked with the filepath to open the file contents', () => {
+        const mockOpenFile = jest.fn();
+        render(<DirectoryTable {...sharedTestProps} openFile={mockOpenFile} />);
+        const fileButton = within(screen.getAllByRole('row')[1]).getByRole('button');
+        expect(mockOpenFile).not.toHaveBeenCalled();
+        fileButton.click();
+        expect(mockOpenFile).toHaveBeenCalledWith(['dir0', 'dir1', 'Public Holiday policy.pdf']);
+    });
 
     it.todo('sorts names in alphabetical order when the order is unsorted or reversed');
 
