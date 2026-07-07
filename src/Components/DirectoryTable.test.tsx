@@ -1,5 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react'
-import { Dir } from 'fs';
+import { render, screen, within, cleanup } from '@testing-library/react'
 import { DirectoryTable } from "./DirectoryTable";
 
 describe('DirectoryTable', () => {
@@ -11,18 +10,38 @@ describe('DirectoryTable', () => {
         cleanup();
     });
 
+    const sharedTestProps = { 
+        caption: 'Test heading',
+        files: [
+            { nodeName: 'Public Holiday policy', nodeType: 'pdf', added: '2016-12-06' },
+            { nodeName: 'Expenses', nodeType: 'folder', files: [] }
+        ]
+    };
+
     it('renders a table with a caption, and headings for name, type, creation date, and a clickable link', () => {
-        render(<DirectoryTable caption="Test heading" />);
+        render(<DirectoryTable {...sharedTestProps} />);
         expect(screen.getByRole('caption')).toHaveTextContent('Test heading');
         const headings = screen.getAllByRole('columnheader');
         expect(headings.length).toBe(4);
         expect(headings[0]).toHaveTextContent('Name');
         expect(headings[1]).toHaveTextContent('Type');
-        expect(headings[2]).toHaveTextContent('Date');
+        expect(headings[2]).toHaveTextContent('Date added');
         expect(headings[3]).toHaveTextContent('Click to open');
     });
 
-    it.todo('renders rows with entries that correspond to the columns of the table');
+    it('renders rows with entries that correspond to the columns of the table', () => {
+        render(<DirectoryTable {...sharedTestProps} />);
+        const rows = screen.getAllByRole('row');
+        expect(rows.length).toBe(3);
+        const fileElements = within(rows[1]);
+        expect(fileElements.getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
+        expect(fileElements.getAllByRole('cell')[0]).toHaveTextContent('pdf');
+        expect(fileElements.getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
+        const folderElements = within(rows[2]);
+        expect(folderElements.getByRole('rowheader')).toHaveTextContent('Expenses');
+        expect(folderElements.getAllByRole('cell')[0]).toHaveTextContent('folder');
+        expect(folderElements.getAllByRole('cell')[1]).toHaveTextContent('\u2014');
+    });
 
     it.todo('runs a callback when a directory has been clicked with the updated filepath');
 
