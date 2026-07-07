@@ -1,35 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-type FileProps = { nodeName: string; nodeType: string; added: string; };
-type DirectoryProps = { 
+enum ListOrdering { Unsorted = 'unsorted', Sorted = 'sorted', Reversed = 'reversed' };
+
+type File = { nodeName: string; nodeType: string; added: string; };
+type Directory = { 
     nodeName: string;
     nodeType: string;
-    files: (FileProps | DirectoryProps)[];
+    files: (File | Directory)[];
     added?: string;
 };
-type NodeProps = FileProps | DirectoryProps;
+type FileNode = File | Directory;
 type DirectoryTableProps = {
     caption: string;
-    files: NodeProps[];
+    files: FileNode[];
     filePath: string[];
     openFile: (filePath: string[]) => void;
     openDirectory: (filePath: string[]) => void;
 };
 
 export const DirectoryTable = ({ caption, files, filePath, openFile, openDirectory }: DirectoryTableProps) => {
+    const [nodesList, setNodesList] = useState(files);
+    const [nameSort, setNameSort] = useState(ListOrdering.Unsorted);
+    const sortNames = () => {
+        if (nameSort === ListOrdering.Unsorted || nameSort === ListOrdering.Reversed) {
+            setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeA.nodeName.localeCompare(nodeB.nodeName)));
+            setNameSort(ListOrdering.Sorted);
+        } else {
+            setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeB.nodeName.localeCompare(nodeA.nodeName)));
+            setNameSort(ListOrdering.Reversed);
+        }
+    };
+
     return (
         <table>
             <caption>{caption}</caption>
             <thead>
                 <tr>
-                    <th scope="col">Name</th>
+                    <th scope="col"><button onClick={sortNames}>Name</button></th>
                     <th scope="col">Type</th>
                     <th scope="col">Date added</th>
                     <th scope="col">Click to open</th>
                 </tr>
             </thead>
             <tbody>
-                {files.map(({ nodeName, nodeType, added }) => {
+                {nodesList.map(({ nodeName, nodeType, added }) => {
                     const onClick = () => nodeType === 'folder'
                         ? openDirectory([...filePath, nodeName])
                         : openFile([...filePath, `${nodeName}.${nodeType}`]);

@@ -1,4 +1,6 @@
-import { render, screen, within, cleanup } from '@testing-library/react'
+import { render, screen, within, cleanup, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
 import { DirectoryTable } from "./DirectoryTable";
 
 describe('DirectoryTable', () => {
@@ -64,13 +66,41 @@ describe('DirectoryTable', () => {
         expect(mockOpenFile).toHaveBeenCalledWith(['dir0', 'dir1', 'Public Holiday policy.pdf']);
     });
 
-    it.todo('sorts names in alphabetical order when the order is unsorted or reversed');
+    it('sorts names in alphabetical order when the order is unsorted or reversed', async () => {
+        render(<DirectoryTable {...sharedTestProps}/>);
+        let rows = screen.getAllByRole('row');
+        const nameButton = screen.getByRole('button', { name: 'Name' });
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
+        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Expenses');
+        userEvent.click(nameButton);
+        await waitFor(() => {
+            rows = screen.getAllByRole('row');
+            expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Expenses');
+            expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
+        });
+    });
 
-    it.todo('sorts names in reverse-alphabetical order when the order is sorted');
+    it('sorts names in reverse-alphabetical order when the order is sorted', async () => {
+        let rows;
+        render(<DirectoryTable {...sharedTestProps}/>);
+        const nameButton = screen.getByRole('button', { name: 'Name' });
+        userEvent.click(nameButton);
+        await waitFor(() => {
+            rows = screen.getAllByRole('row');
+            expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Expenses');
+            expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
+        });
+        userEvent.click(nameButton);
+        await waitFor(() => {
+            rows = screen.getAllByRole('row');
+            expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
+            expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Expenses');
+        });
+    });
 
-    it.todo('sorts dates in chronological in ical order when the order is unsorted or reversed');
+    it.todo('sorts dates in chronological order when the order is unsorted or reversed');
 
     it.todo('sorts dates in reverse-chronological order when the order is sorted');
 
     it.todo('marks one column as unsorted when another has been sorted');
-})
+});

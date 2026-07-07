@@ -2,6 +2,8 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { DirectoryTable } from './Components/DirectoryTable';
+
 function App() {
   return (
     <div className="App">
@@ -10,6 +12,13 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <DirectoryTable caption="hello" filePath={['goo', 'fooey']} openFile={console.log} openDirectory={console.log} files={[
+            { nodeName: 'Public Holiday policy', nodeType: 'pdf', added: '2016-12-06' },
+            { nodeName: 'Expenses', nodeType: 'folder', files: [] }
+        ]}/>
+
+
+
         <a
           className="App-link"
           href="https://reactjs.org"
