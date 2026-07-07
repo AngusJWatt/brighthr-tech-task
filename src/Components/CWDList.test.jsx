@@ -2,7 +2,10 @@ import { render, screen } from '@testing-library/react'
 import { CWDList } from "./CWDList";
 
 describe('CWDList', () => {
-    it.todo('renders a corresponding series of directories when provided with a current working directory list');
+    it('renders a corresponding series of directories when provided with a current working directory list', () => {
+        render(<CWDList currentWorkingDirectory={['dir0', 'dir1']} />);
+        expect(screen.queryByText('HOME / dir0 / dir1'));
+    });
 
     it.todo('renders only HOME when the list of directories is empty');
 

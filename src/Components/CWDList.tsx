@@ -5,10 +5,10 @@ type CWDProps = {
 };
 
 export const CWDList = ({ currentWorkingDirectory }: CWDProps) => (
-    <>
+    <p>
         {currentWorkingDirectory.reduce(
-            (acc, val) => (<>{acc} / <span>{val}</span></>), 
+            (acc, val) => (<>{acc}&nbsp;/&nbsp;<span>{val}</span></>), 
             <span>HOME</span>
         )}
-    </>
+    </p>
 );
