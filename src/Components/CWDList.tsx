@@ -1,4 +1,14 @@
 import React from 'react';
 
-export const CWDList = () => {
+type CWDProps = {
+    currentWorkingDirectory: string[];
 };
+
+export const CWDList = ({ currentWorkingDirectory }: CWDProps) => (
+    <>
+        {currentWorkingDirectory.reduce(
+            (acc, val) => (<>{acc} / <span>{val}</span></>), 
+            <span>HOME</span>
+        )}
+    </>
+);
