@@ -189,5 +189,36 @@ describe('DirectoryTable', () => {
         });
     });
 
-    it.todo('marks one column as unsorted when another has been sorted');
+    it('marks one column as unsorted when another has been sorted', async () => {
+        render(<DirectoryTable {...sharedTestProps}/>);
+
+        const nameHeader = screen.getByRole('columnheader', { name: 'Name (Click to sort)' });
+        const nameButton = screen.getByRole('button', { name: 'Name (Click to sort)' });
+        const dateHeader = screen.getByRole('columnheader', { name: 'Date added (Click to sort)' });
+        const dateButton = screen.getByRole('button', { name: 'Date added (Click to sort)' });
+
+        expect(nameHeader).toHaveAttribute('aria-sort', 'other');
+        expect(dateHeader).toHaveAttribute('aria-sort', 'other');
+
+        userEvent.click(nameButton);
+
+        await waitFor(() => {
+            expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
+            expect(dateHeader).toHaveAttribute('aria-sort', 'other');
+        });
+
+        userEvent.click(dateButton);
+
+        await waitFor(() => {
+            expect(nameHeader).toHaveAttribute('aria-sort', 'other');
+            expect(dateHeader).toHaveAttribute('aria-sort', 'ascending');
+        });
+
+        userEvent.click(nameButton);
+
+        await waitFor(() => {
+            expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
+            expect(dateHeader).toHaveAttribute('aria-sort', 'other');
+        });
+    });
 });

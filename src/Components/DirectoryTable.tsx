@@ -24,6 +24,7 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
             setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeB.nodeName.localeCompare(nodeA.nodeName)));
             setNameSort(SortOrdering.Descending);
         }
+        setDateSort(SortOrdering.Other);
     };
     const sortDates = () => {
         /* Always put a filenode with a date above one without, but otherwise leave the order preserved */
@@ -38,6 +39,7 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
             ));
             setDateSort(SortOrdering.Descending);
         }
+        setNameSort(SortOrdering.Other);
     };
 
     return (
