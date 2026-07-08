@@ -32,7 +32,7 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
     };
 
     return (
-        <table aria-live="polite">
+        <table>
             <caption>{caption}</caption>
             <thead>
                 <tr>
@@ -42,7 +42,7 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
                     <th scope="col">Click to open</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody aria-live="polite">
                 {nodesList.map(({ nodeName, nodeType, added }) => {
                     const onClick = () => nodeType === 'folder'
                         ? openDirectory([...filePath, nodeName])
