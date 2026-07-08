@@ -7,7 +7,7 @@ export const SearchBar = ({ setRegex }: SearchBarProps) => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
         const { value } = event.target;
         /* Opted to have case-insensitive searches, can be removed. */
-        setRegex(new RegExp(`^(${value})`, "i"));
+        setRegex(new RegExp(`^(${value.replace(/([\*\.\+\*\?\^\$\(\)\[\]\{\}\|\\])/g, "\\$1")})`, "i"));
         setInputText(value);
     };
 
