@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 
-enum ListOrdering { Ascending = 'ascending', Descending = 'descending', Other = 'other' };
+enum SortOrdering { Ascending = 'ascending', Descending = 'descending', Other = 'other' };
 
-type File = { nodeName: string; nodeType: string; added: string; };
-type Directory = { 
-    nodeName: string;
-    nodeType: string;
-    files: (File | Directory)[];
-    added?: string;
-};
+type File = { nodeName: string; nodeType: string; added: Date; };
+type Directory = { nodeName: string; nodeType: string; files: (File | Directory)[]; added?: Date; };
 type FileNode = File | Directory;
-type DirectoryTableProps = {
-    caption: string;
+type DirectoryTableProps = { caption: string;
     files: FileNode[];
     filePath: string[];
     openFile: (filePath: string[]) => void;
@@ -20,14 +14,29 @@ type DirectoryTableProps = {
 
 export const DirectoryTable = ({ caption, files, filePath, openFile, openDirectory }: DirectoryTableProps) => {
     const [nodesList, setNodesList] = useState(files);
-    const [nameSort, setNameSort] = useState(ListOrdering.Other);
+    const [nameSort, setNameSort] = useState(SortOrdering.Other);
+    const [dateSort, setDateSort] = useState(SortOrdering.Other);
     const sortNames = () => {
-        if (nameSort === ListOrdering.Other || nameSort === ListOrdering.Descending) {
+        if (nameSort !== SortOrdering.Ascending) {
             setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeA.nodeName.localeCompare(nodeB.nodeName)));
-            setNameSort(ListOrdering.Ascending);
+            setNameSort(SortOrdering.Ascending);
         } else {
             setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeB.nodeName.localeCompare(nodeA.nodeName)));
-            setNameSort(ListOrdering.Descending);
+            setNameSort(SortOrdering.Descending);
+        }
+    };
+    const sortDates = () => {
+        /* Always put a filenode with a date above one without, but otherwise leave the order preserved */
+        if(dateSort !== SortOrdering.Ascending) {
+            setNodesList(prevList => prevList.sort(
+                (nodeA, nodeB) => (nodeA.added?.getTime() || Infinity) - (nodeB.added?.getTime() || Infinity) || 0
+            ));
+            setDateSort(SortOrdering.Ascending);
+        } else {
+            setNodesList(prevList => prevList.sort(
+                (nodeA, nodeB) => (nodeB.added?.getTime() || -Infinity) - (nodeA.added?.getTime() || -Infinity) || 0
+            ));
+            setDateSort(SortOrdering.Descending);
         }
     };
 
@@ -36,10 +45,14 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
             <caption>{caption}</caption>
             <thead>
                 <tr>
-                    <th scope="col" aria-sorted={nameSort}><button onClick={sortNames}>Name</button></th>
+                    <th scope="col" aria-sort={nameSort}>
+                        <button onClick={() => sortNames()}>Name (Click to sort)</button>
+                    </th>
                     <th scope="col">Type</th>
-                    <th scope="col">Date added</th>
-                    <th scope="col">Click to open</th>
+                    <th scope="col" aria-sort={dateSort}>
+                        <button onClick={() => sortDates()}>Date added (Click to sort)</button>
+                    </th>
+                    <th scope="col">Open contents</th>
                 </tr>
             </thead>
             <tbody aria-live="polite">
@@ -49,11 +62,11 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
                         : openFile([...filePath, `${nodeName}.${nodeType}`]);
                     return (
                     /* nodeName.nodeType should be a unique value for a key, as any two files in the same directory
-                     * sharing the same name should be forbidden in any UNIX-like system */
+                     * sharing the same name and extension should be forbidden in any UNIX-like system */
                         <tr key={`${nodeName}.${nodeType}`}>
                             <th scope="row">{nodeName}</th>
                             <td>{nodeType}</td>
-                            <td>{added || '\u2014'}</td>
+                            <td>{added?.toLocaleDateString("en-GB") || '\u2014'}</td>
                             <td><button onClick={onClick}>Open</button></td>
                         </tr>
                     )
