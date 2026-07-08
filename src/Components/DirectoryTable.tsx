@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-enum ListOrdering { Unsorted = 'unsorted', Sorted = 'sorted', Reversed = 'reversed' };
+enum ListOrdering { Ascending = 'ascending', Descending = 'descending', Other = 'other' };
 
 type File = { nodeName: string; nodeType: string; added: string; };
 type Directory = { 
@@ -20,23 +20,23 @@ type DirectoryTableProps = {
 
 export const DirectoryTable = ({ caption, files, filePath, openFile, openDirectory }: DirectoryTableProps) => {
     const [nodesList, setNodesList] = useState(files);
-    const [nameSort, setNameSort] = useState(ListOrdering.Unsorted);
+    const [nameSort, setNameSort] = useState(ListOrdering.Other);
     const sortNames = () => {
-        if (nameSort === ListOrdering.Unsorted || nameSort === ListOrdering.Reversed) {
+        if (nameSort === ListOrdering.Other || nameSort === ListOrdering.Descending) {
             setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeA.nodeName.localeCompare(nodeB.nodeName)));
-            setNameSort(ListOrdering.Sorted);
+            setNameSort(ListOrdering.Ascending);
         } else {
             setNodesList(prevList => prevList.sort((nodeA, nodeB) => nodeB.nodeName.localeCompare(nodeA.nodeName)));
-            setNameSort(ListOrdering.Reversed);
+            setNameSort(ListOrdering.Descending);
         }
     };
 
     return (
-        <table>
+        <table aria-live="polite">
             <caption>{caption}</caption>
             <thead>
                 <tr>
-                    <th scope="col"><button onClick={sortNames}>Name</button></th>
+                    <th scope="col" aria-sorted={nameSort}><button onClick={sortNames}>Name</button></th>
                     <th scope="col">Type</th>
                     <th scope="col">Date added</th>
                     <th scope="col">Click to open</th>
