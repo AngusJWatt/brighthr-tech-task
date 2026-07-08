@@ -20,6 +20,7 @@ describe('SearchBar', () => {
         userEvent.type(input, 'Hello');
 
         await waitFor(() => {
+            expect(input).toHaveValue('Hello');
             expect(setRegex).toHaveBeenCalledWith(/^(Hello)/i);
         });
     });
@@ -32,9 +33,29 @@ describe('SearchBar', () => {
         userEvent.type(input, 'Me + Pepper (my dog).jpg');
 
         await waitFor(() => {
+            expect(input).toHaveValue('Me + Pepper (my dog).jpg');
             expect(setRegex).toHaveBeenCalledWith(/^(Me \+ Pepper \(my dog\)\.jpg)/i);
         });
     });
 
-    it.todo('removes the contents of the search bar and clers the regex when the cancel button is clicked');
+    it('removes the contents of the search bar and clears the regex when the cancel button is clicked', async () => {
+        const setRegex = jest.fn();
+        render(<SearchBar setRegex={setRegex}/>);
+        const input = screen.getByRole('textbox');
+        const closeButton = screen.getByRole('button', { name: 'Remove filter' });
+
+        userEvent.type(input, 'Hello');
+
+        await waitFor(() => {
+            expect(setRegex).toHaveBeenCalledWith(/^(Hello)/i);
+            
+        });
+        
+        userEvent.click(closeButton);
+
+        await waitFor(() => {
+            expect(input).toHaveValue('');
+            expect(setRegex).toHaveBeenCalledWith(/^()/i);
+        });
+    });
 });
