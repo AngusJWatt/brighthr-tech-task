@@ -17,7 +17,7 @@ describe('DirectoryTable', () => {
         files: [
             { nodeName: 'Public Holiday policy', nodeType: 'pdf', added: new Date(Date.UTC(2016, 11, 6)) },
             { nodeName: 'Expenses', nodeType: 'folder', files: [] },
-            { nodeName: 'Cost centres', nodeType: 'csv', added: new Date(2016, 7, 12) },
+            { nodeName: 'Cost centres', nodeType: 'csv', added: new Date(2016, 7, 12) }
         ],
         filePath: ['dir0', 'dir1'],
         openFile: jest.fn(),
@@ -57,7 +57,7 @@ describe('DirectoryTable', () => {
         expect(folderElements.getAllByRole('cell')[0]).toHaveTextContent('folder');
         expect(folderElements.getAllByRole('cell')[1]).toHaveTextContent('\u2014');
 
-         const file1Elements = within(rows[3]);
+        const file1Elements = within(rows[3]);
         
         expect(file1Elements.getByRole('rowheader')).toHaveTextContent('Cost centres');
         expect(file1Elements.getAllByRole('cell')[0]).toHaveTextContent('csv');
@@ -91,9 +91,8 @@ describe('DirectoryTable', () => {
     });
 
     it('sorts names in alphabetical order when the order is not ascending', async () => {
-        
         render(<DirectoryTable {...sharedTestProps}/>);
-        
+
         let rows = screen.getAllByRole('row');
         const nameHeader = screen.getByRole('columnheader', { name: 'Name (Click to sort)' });
         const nameButton = screen.getByRole('button', { name: 'Name (Click to sort)' });
@@ -105,20 +104,20 @@ describe('DirectoryTable', () => {
         
         userEvent.click(nameButton);
         
-        await waitFor(() => {    
+        await waitFor(() => {
+            expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
+
             rows = screen.getAllByRole('row');
             
             expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Cost centres');
             expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Expenses');
             expect(within(rows[3]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
-            expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
         });
     });
 
     it('sorts names in reverse-alphabetical order when the order is ascending', async () => {
         render(<DirectoryTable {...sharedTestProps}/>);
-        
-        let rows;
+
         const nameHeader = screen.getByRole('columnheader', { name: 'Name (Click to sort)' });
         const nameButton = screen.getByRole('button', { name: 'Name (Click to sort)' });
         
@@ -131,12 +130,13 @@ describe('DirectoryTable', () => {
         userEvent.click(nameButton);
         
         await waitFor(() => {
-            rows = screen.getAllByRole('row');
+            expect(nameHeader).toHaveAttribute('aria-sort', 'descending');
+
+            const rows = screen.getAllByRole('row');
 
             expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
             expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Expenses');
             expect(within(rows[3]).getByRole('rowheader')).toHaveTextContent('Cost centres');
-            expect(nameHeader).toHaveAttribute('aria-sort', 'descending');
         });
     });
 
@@ -146,8 +146,7 @@ describe('DirectoryTable', () => {
         let rows = screen.getAllByRole('row');
         const dateHeader = screen.getByRole('columnheader', { name: 'Date added (Click to sort)' });
         const dateButton = screen.getByRole('button', { name: 'Date added (Click to sort)' });
-        
-        expect(dateHeader).toHaveAttribute('aria-sort', 'other');
+
         expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
         expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('\u2014');
         expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
@@ -155,16 +154,40 @@ describe('DirectoryTable', () => {
         userEvent.click(dateButton);
 
         await waitFor(() => {
-            rows = screen.getAllByRole('row');
+            expect(dateHeader).toHaveAttribute('aria-sort', 'ascending');
+
+            const rows = screen.getAllByRole('row');
 
             expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
             expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
             expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('\u2014');
-            expect(dateHeader).toHaveAttribute('aria-sort', 'ascending');
         });
     });
 
-    it.todo('sorts dates in reverse-chronological order when the order ascending');
+    it('sorts dates in reverse-chronological order when the order ascending', async () => {
+        render(<DirectoryTable {...sharedTestProps}/>);
+
+        const dateHeader = screen.getByRole('columnheader', { name: 'Date added (Click to sort)' });
+        const dateButton = screen.getByRole('button', { name: 'Date added (Click to sort)' });
+
+        userEvent.click(dateButton);
+
+        await waitFor(() => {
+            expect(dateHeader).toHaveAttribute('aria-sort', 'ascending');
+        });
+
+        userEvent.click(dateButton);
+
+        await waitFor(() => {
+            expect(dateHeader).toHaveAttribute('aria-sort', 'descending');
+
+            const rows = screen.getAllByRole('row');
+
+            expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
+            expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
+            expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('\u2014');
+        });
+    });
 
     it.todo('marks one column as unsorted when another has been sorted');
 });
