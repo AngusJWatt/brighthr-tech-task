@@ -63,10 +63,10 @@ export const DirectoryTable = ({ caption, files, filePath, openDirectory }: Dire
                     <tr key={`${nodeName}.${nodeType}`}>
                         <th scope="row">{nodeName}</th>
                         <td>{nodeType}</td>
-                        <td>{added?.toLocaleDateString("en-GB") || '\u2014'}</td>
+                        <td>{added?.toLocaleDateString("en-GB") || (<span aria-hidden="true">&mdash;</span>)}</td>
                         <td>{nodeType === 'folder'
                             ? (<button onClick={() => {openDirectory([...filePath, nodeName])}}>Open</button>)
-                            : '\u2014'
+                            : (<span aria-hidden="true">&mdash;</span>)
                         }</td>
                     </tr>
                 ))}
