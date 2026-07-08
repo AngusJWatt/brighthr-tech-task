@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 enum SortOrdering { Ascending = 'ascending', Descending = 'descending', Other = 'other' };
 
 type File = { nodeName: string; nodeType: string; added: Date; };
 type Directory = { nodeName: string; nodeType: string; files: (File | Directory)[]; added?: Date; };
 type FileNode = File | Directory;
-type DirectoryTableProps = { caption: string;
+type DirectoryTableProps = {
+    caption: string;
     files: FileNode[];
+    filterRegex: RegExp;
     filePath: string[];
     openDirectory: (filePath: string[]) => void;
 };
 
-export const DirectoryTable = ({ caption, files, filePath, openDirectory }: DirectoryTableProps) => {
-    const [nodesList, setNodesList] = useState(files);
+const filterNodes = (nodeList: FileNode[], filterRegex: RegExp):FileNode[] => {
+    return nodeList.filter(({ nodeName, nodeType }) => {
+        const fullName = nodeType === 'folder' ? nodeName : `${nodeName}.${nodeType}`;
+        return filterRegex.test(fullName); 
+    });
+};
+
+export const DirectoryTable = ({ caption, files, filterRegex, filePath, openDirectory }: DirectoryTableProps) => {
+    const [nodesList, setNodesList] = useState(filterNodes(files, filterRegex));
     const [nameSort, setNameSort] = useState(SortOrdering.Other);
     const [dateSort, setDateSort] = useState(SortOrdering.Other);
     const sortNames = () => {
@@ -26,8 +35,8 @@ export const DirectoryTable = ({ caption, files, filePath, openDirectory }: Dire
         setDateSort(SortOrdering.Other);
     };
     const sortDates = () => {
-        /* Always put a filenode with a date above one without, but otherwise leave the order preserved */
-        if(dateSort !== SortOrdering.Ascending) {
+        /* Always put a filenode with a date above one without, but otherwise leave the order preserved. */
+        if (dateSort !== SortOrdering.Ascending) {
             setNodesList(prevList => prevList.sort(
                 (nodeA, nodeB) => (nodeA.added?.getTime() || Infinity) - (nodeB.added?.getTime() || Infinity) || 0
             ));
@@ -41,17 +50,44 @@ export const DirectoryTable = ({ caption, files, filePath, openDirectory }: Dire
         setNameSort(SortOrdering.Other);
     };
 
+    useEffect(() => {
+        /* Cannot rely on previous state of nodesList, in case there is a subtraction applied to the regex, which means
+         * applying a regex to a list with pertinent results already filtered out. Instead, take the files from props
+         * and apply the regex to them, then sort them by the order the user set. */
+        const filterFiles = filterNodes(files, filterRegex);
+        /* TODO: Refactor sorting function to their own methods so they can be reused rather than
+         * duplicated/inverted. */
+        if (nameSort !== SortOrdering.Other) {
+            if (nameSort === SortOrdering.Ascending) {
+                filterFiles.sort((nodeA, nodeB) => nodeA.nodeName.localeCompare(nodeB.nodeName));
+            } else {
+                filterFiles.sort((nodeA, nodeB) => nodeB.nodeName.localeCompare(nodeA.nodeName));
+            }
+        } else if (dateSort !== SortOrdering.Other) {
+            if (dateSort === SortOrdering.Ascending) {
+                filterFiles.sort(
+                    (nodeA, nodeB) => (nodeA.added?.getTime() || Infinity) - (nodeB.added?.getTime() || Infinity) || 0
+                );
+            } else {
+                filterFiles.sort(
+                    (nodeA, nodeB) => (nodeB.added?.getTime() || -Infinity) - (nodeA.added?.getTime() || -Infinity) || 0
+                );
+            }
+        }
+        setNodesList(filterFiles);
+    }, [files, filterRegex]);
+
     return (
         <table>
             <caption>{caption}</caption>
             <thead>
                 <tr>
                     <th scope="col" aria-sort={nameSort}>
-                        <button onClick={() => sortNames()}>Name (Click to sort)</button>
+                        <button onClick={sortNames}>Name (Click to sort)</button>
                     </th>
                     <th scope="col">Type</th>
                     <th scope="col" aria-sort={dateSort}>
-                        <button onClick={() => sortDates()}>Date added (Click to sort)</button>
+                        <button onClick={sortDates}>Date added (Click to sort)</button>
                     </th>
                     <th scope="col">Link</th>
                 </tr>

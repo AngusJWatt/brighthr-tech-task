@@ -21,7 +21,8 @@ describe('DirectoryTable', () => {
         ],
         filePath: ['dir0', 'dir1'],
         openFile: jest.fn(),
-        openDirectory: jest.fn()
+        openDirectory: jest.fn(),
+        filterRegex: new RegExp("")
     };
 
     it('renders a table with a caption, and headings for name, type, creation date, and a clickable link', () => {
@@ -210,5 +211,66 @@ describe('DirectoryTable', () => {
             expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
             expect(dateHeader).toHaveAttribute('aria-sort', 'other');
         });
+    });
+
+    it('filters filenodes according to filterRegex', () => {
+        render(<DirectoryTable {...sharedTestProps} filterRegex={new RegExp("Public Holiday policy\.pdf")}/>);
+        
+        const rows = screen.getAllByRole('row');
+        
+        expect(rows.length).toBe(2);
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
+    });
+
+    it('respects order of names when applying a regex', async () => {
+        const { rerender } = render(
+            <DirectoryTable {...sharedTestProps} filterRegex={new RegExp("")}/>
+        );
+        const nameButton = screen.getByRole('button', { name: 'Name (Click to sort)' });
+        const nameHeader = screen.getByRole('columnheader', { name: 'Name (Click to sort)' });
+
+
+        userEvent.click(nameButton);
+
+        await waitFor(() => {
+            expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
+        });
+
+        /* Both "Expenses" and "Cost centres" share the substring "en", and would be out-of-order on rendering without
+         * any name-ordering applying. */
+        rerender(
+            <DirectoryTable {...sharedTestProps} filterRegex={new RegExp("en")}/>
+        );
+
+        const rows = screen.getAllByRole('row');
+
+        expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Cost centres');
+        expect(within(rows[2]).getByRole('rowheader')).toHaveTextContent('Expenses');
+    });
+
+    it('respects order of dates when applying a regex', async () => {
+        const { rerender } = render(
+            <DirectoryTable {...sharedTestProps} filterRegex={new RegExp("")}/>
+        );
+        const dateButton = screen.getByRole('button', { name: 'Name (Click to sort)' });
+        const dateHeader = screen.getByRole('columnheader', { name: 'Name (Click to sort)' });
+
+
+        userEvent.click(dateButton);
+
+        await waitFor(() => {
+            expect(dateHeader).toHaveAttribute('aria-sort', 'ascending');
+        });
+
+        /* Both "Public Holiday policy" and "Cost centres" share the substring "o", and would be out-of-order on
+         * rendering without any date-ordering applied. */
+        rerender(
+            <DirectoryTable {...sharedTestProps} filterRegex={new RegExp("o")}/>
+        );
+
+        const rows = screen.getAllByRole('row');
+
+        expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
+        expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
     });
 });
