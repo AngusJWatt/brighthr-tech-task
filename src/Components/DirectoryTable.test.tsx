@@ -35,7 +35,7 @@ describe('DirectoryTable', () => {
         expect(headings[0]).toHaveTextContent('Name');
         expect(headings[1]).toHaveTextContent('Type');
         expect(headings[2]).toHaveTextContent('Date added');
-        expect(headings[3]).toHaveTextContent('Open contents');
+        expect(headings[3]).toHaveTextContent('Link');
     });
 
     it('renders rows with entries that correspond to the columns of the table', () => {
@@ -50,18 +50,21 @@ describe('DirectoryTable', () => {
         expect(file0Elements.getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
         expect(file0Elements.getAllByRole('cell')[0]).toHaveTextContent('pdf');
         expect(file0Elements.getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
+        expect(file0Elements.getAllByRole('cell')[2]).toHaveTextContent('\u2014');
         
         const folderElements = within(rows[2]);
         
         expect(folderElements.getByRole('rowheader')).toHaveTextContent('Expenses');
         expect(folderElements.getAllByRole('cell')[0]).toHaveTextContent('folder');
         expect(folderElements.getAllByRole('cell')[1]).toHaveTextContent('\u2014');
+        expect(within(folderElements.getAllByRole('cell')[2]).getByRole('button', { name: 'Open' }));
 
         const file1Elements = within(rows[3]);
         
         expect(file1Elements.getByRole('rowheader')).toHaveTextContent('Cost centres');
         expect(file1Elements.getAllByRole('cell')[0]).toHaveTextContent('csv');
         expect(file1Elements.getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
+        expect(file0Elements.getAllByRole('cell')[2]).toHaveTextContent('\u2014');
     });
 
     it('runs a callback when a directory has been clicked with the updated filepath', () => {
@@ -75,19 +78,6 @@ describe('DirectoryTable', () => {
         directoryButton.click();
         
         expect(mockOpenDirectory).toHaveBeenCalledWith(['dir0', 'dir1', 'Expenses']);
-    });
-
-    it('runs a callback when a file has been clicked with the filepath to open the file contents', () => {
-        const mockOpenFile = jest.fn();
-        render(<DirectoryTable {...sharedTestProps} openFile={mockOpenFile} />);
-        
-        const fileButton = within(screen.getAllByRole('row')[1]).getByRole('button');
-        
-        expect(mockOpenFile).not.toHaveBeenCalled();
-        
-        fileButton.click();
-        
-        expect(mockOpenFile).toHaveBeenCalledWith(['dir0', 'dir1', 'Public Holiday policy.pdf']);
     });
 
     it('sorts names in alphabetical order when the order is not ascending', async () => {

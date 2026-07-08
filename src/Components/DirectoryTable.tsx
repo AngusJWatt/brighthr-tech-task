@@ -8,11 +8,10 @@ type FileNode = File | Directory;
 type DirectoryTableProps = { caption: string;
     files: FileNode[];
     filePath: string[];
-    openFile: (filePath: string[]) => void;
     openDirectory: (filePath: string[]) => void;
 };
 
-export const DirectoryTable = ({ caption, files, filePath, openFile, openDirectory }: DirectoryTableProps) => {
+export const DirectoryTable = ({ caption, files, filePath, openDirectory }: DirectoryTableProps) => {
     const [nodesList, setNodesList] = useState(files);
     const [nameSort, setNameSort] = useState(SortOrdering.Other);
     const [dateSort, setDateSort] = useState(SortOrdering.Other);
@@ -54,25 +53,23 @@ export const DirectoryTable = ({ caption, files, filePath, openFile, openDirecto
                     <th scope="col" aria-sort={dateSort}>
                         <button onClick={() => sortDates()}>Date added (Click to sort)</button>
                     </th>
-                    <th scope="col">Open contents</th>
+                    <th scope="col">Link</th>
                 </tr>
             </thead>
             <tbody aria-live="polite">
-                {nodesList.map(({ nodeName, nodeType, added }) => {
-                    const onClick = () => nodeType === 'folder'
-                        ? openDirectory([...filePath, nodeName])
-                        : openFile([...filePath, `${nodeName}.${nodeType}`]);
-                    return (
+                {nodesList.map(({ nodeName, nodeType, added }) => (
                     /* nodeName.nodeType should be a unique value for a key, as any two files in the same directory
                      * sharing the same name and extension should be forbidden in any UNIX-like system */
-                        <tr key={`${nodeName}.${nodeType}`}>
-                            <th scope="row">{nodeName}</th>
-                            <td>{nodeType}</td>
-                            <td>{added?.toLocaleDateString("en-GB") || '\u2014'}</td>
-                            <td><button onClick={onClick}>Open</button></td>
-                        </tr>
-                    )
-                })}
+                    <tr key={`${nodeName}.${nodeType}`}>
+                        <th scope="row">{nodeName}</th>
+                        <td>{nodeType}</td>
+                        <td>{added?.toLocaleDateString("en-GB") || '\u2014'}</td>
+                        <td>{nodeType === 'folder'
+                            ? (<button onClick={() => {openDirectory([...filePath, nodeName])}}>Open</button>)
+                            : '\u2014'
+                        }</td>
+                    </tr>
+                ))}
             </tbody>
         </table>
     )
