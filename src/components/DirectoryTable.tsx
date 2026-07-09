@@ -8,7 +8,7 @@ type DirectoryTableProps = {
     files: FileNode[];
     filterRegex: RegExp;
     filePath: string[];
-    openDirectory: (filePath: string[]) => void;
+    onDirectoryLinkClick: (updatedFilepath: string[]) => void;
 };
 
 const filterNodes = (nodeList: FileNode[], filterRegex: RegExp):FileNode[] => {
@@ -38,7 +38,7 @@ const sortDates = (nodeArray: FileNode[], shouldInvert: boolean) => {
     });
 };
 
-export const DirectoryTable = ({ caption, files, filterRegex, filePath, openDirectory }: DirectoryTableProps) => {
+export const DirectoryTable = ({ caption, files, filterRegex, filePath, onDirectoryLinkClick }: DirectoryTableProps) => {
     const [nodesList, setNodesList] = useState(filterNodes(files, filterRegex));
     const [nameSort, setNameSort] = useState(SortOrdering.Other);
     const [dateSort, setDateSort] = useState(SortOrdering.Other);
@@ -94,7 +94,7 @@ export const DirectoryTable = ({ caption, files, filterRegex, filePath, openDire
                         <td>{nodeType}</td>
                         <td>{added || (<span aria-hidden="true">&mdash;</span>)}</td>
                         <td>{nodeType === 'folder'
-                            ? (<button onClick={() => {openDirectory([...filePath, name])}}>Open</button>)
+                            ? (<button onClick={() => onDirectoryLinkClick([...filePath, name])}>Open</button>)
                             : (<span aria-hidden="true">&mdash;</span>)
                         }</td>
                     </tr>

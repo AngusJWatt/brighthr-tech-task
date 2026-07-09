@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
   beforeEach(() => {
+    jest.restoreAllMocks();
     cleanup();
   });
 
@@ -47,7 +48,7 @@ describe('App', () => {
     let cwdList = screen.getByTestId('cwd-list');
     let rows: HTMLElement[] = [];
 
-    expect(cwdList).toHaveTextContent('HOME');
+    expect(cwdList).toHaveTextContent('Current directory: HOME');
 
     await waitFor(() => {
       cwdList = screen.getByTestId('cwd-list');
@@ -62,7 +63,7 @@ describe('App', () => {
       cwdList = screen.getByTestId('cwd-list');
       rows = screen.getAllByRole('row');
 
-      expect(cwdList).toHaveTextContent('HOME / Greetings');
+      expect(cwdList).toHaveTextContent('Current directory: HOME / Greetings');
       expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Welcome to the company!');
     });
 
@@ -85,7 +86,6 @@ describe('App', () => {
         { name: 'Cost centres', type: 'csv', added: '2016-08-12' }
       ])
     );
-
     render(<App />);
     const input = screen.getByRole('textbox');
     let rows: HTMLElement[] = [];
@@ -127,7 +127,43 @@ describe('App', () => {
     });
   });
 
-  it.todo('clears the search bar after clicking a new directory link');
+  it('clears the search bar after clicking a new directory link', async () => {
+    jest.spyOn(getFilesModule, 'getFiles').mockImplementation((): Promise<FileNode[]> => 
+      Promise.resolve([
+        { name: 'Public Holiday policy', type: 'pdf', added: '2016-12-06' },
+        { name: 'Expenses', type: 'folder', files: [{ name: 'Cost centres', type: 'csv', added: '2016-08-12' }] }
+      ])
+    );
+    render(<App />);
+
+    const searchBar = screen.getByRole('textbox');
+    let rows: HTMLElement[] = [];
+
+    await waitFor(() => {
+      rows = screen.getAllByRole('row');
+
+      expect(rows.length).toBe(3);
+    });
+
+    userEvent.type(searchBar, 'Expenses');
+
+    await waitFor(() => {
+      rows = screen.getAllByRole('row');
+
+      expect(searchBar).toHaveValue('Expenses');
+      expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Expenses');
+    });
+
+    const expensesLink = within(rows[1]).getByRole('button');
+    userEvent.click(expensesLink);
+
+    await waitFor(() => {
+      rows = screen.getAllByRole('row');
+
+      expect(searchBar).toHaveValue('');
+      expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Cost centres');
+    });
+  });
 
   it.todo('shows a message to the user when a directory is empty');
 

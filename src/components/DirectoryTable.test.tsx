@@ -21,7 +21,7 @@ describe('DirectoryTable', () => {
         ],
         filePath: ['dir0', 'dir1'],
         openFile: jest.fn(),
-        openDirectory: jest.fn(),
+        onDirectoryLinkClick: jest.fn(),
         filterRegex: new RegExp("")
     };
 
@@ -69,16 +69,16 @@ describe('DirectoryTable', () => {
     });
 
     it('runs a callback when a directory has been clicked with the updated filepath', () => {
-        const mockOpenDirectory = jest.fn();
-        render(<DirectoryTable {...sharedTestProps} openDirectory={mockOpenDirectory} />);
+        const mockOnDirectoryLinkClick = jest.fn();
+        render(<DirectoryTable {...sharedTestProps} onDirectoryLinkClick={mockOnDirectoryLinkClick} />);
         
         const directoryButton = within(screen.getAllByRole('row')[2]).getByRole('button');
         
-        expect(mockOpenDirectory).not.toHaveBeenCalled();
+        expect(mockOnDirectoryLinkClick).not.toHaveBeenCalled();
         
         directoryButton.click();
         
-        expect(mockOpenDirectory).toHaveBeenCalledWith(['dir0', 'dir1', 'Expenses']);
+        expect(mockOnDirectoryLinkClick).toHaveBeenCalledWith(['dir0', 'dir1', 'Expenses']);
     });
 
     it('sorts names in alphabetical order when the order is not ascending', async () => {

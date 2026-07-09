@@ -13,7 +13,7 @@ describe('CWDList', () => {
     it('renders a corresponding series of directories when provided with a current working directory list', () => {
         render(<CWDList 
             currentWorkingDirectory={['dir0', 'dir1']}
-            setCurrentWorkingDirectory={jest.fn()}
+            onDirectoryLinkClick={jest.fn()}
             rootName="HOME"
             labelText="CWD:"
         />);
@@ -25,7 +25,7 @@ describe('CWDList', () => {
     it('renders only rootName when the list of directories is empty', () => {
         render(<CWDList
             currentWorkingDirectory={[]}
-            setCurrentWorkingDirectory={jest.fn()}
+            onDirectoryLinkClick={jest.fn()}
             rootName="HOME"
             labelText="CWD:"
         />);
@@ -37,7 +37,7 @@ describe('CWDList', () => {
     it('renders all except the last directory as a clickable link', () => {
         render(<CWDList
             currentWorkingDirectory={['dir0', 'dir1']}
-            setCurrentWorkingDirectory={jest.fn()}
+            onDirectoryLinkClick={jest.fn()}
             rootName="HOME"
             labelText="CWD:"
         />);
@@ -48,20 +48,20 @@ describe('CWDList', () => {
     });
 
     it('runs a callback with a new corresponding working directory list when a link is pressed', () => {
-        const mockSetCurrentWorkingDirectory = jest.fn();
+        const mockOnDirectoryLinkClick = jest.fn();
         render(<CWDList
             labelText="CWD:"
             rootName="HOME"
             currentWorkingDirectory={['dir0', 'dir1']}
-            setCurrentWorkingDirectory={mockSetCurrentWorkingDirectory}
+            onDirectoryLinkClick={mockOnDirectoryLinkClick}
         />);
         const [homeButton, dir0Button] = screen.getAllByRole('button');
-        expect(mockSetCurrentWorkingDirectory).not.toHaveBeenCalled();
+        expect(mockOnDirectoryLinkClick).not.toHaveBeenCalled();
         homeButton.click();
-        expect(mockSetCurrentWorkingDirectory).toHaveBeenCalledTimes(1);
-        expect(mockSetCurrentWorkingDirectory).toHaveBeenCalledWith([]);
+        expect(mockOnDirectoryLinkClick).toHaveBeenCalledTimes(1);
+        expect(mockOnDirectoryLinkClick).toHaveBeenCalledWith([]);
         dir0Button.click();
-        expect(mockSetCurrentWorkingDirectory).toHaveBeenCalledTimes(2);
-        expect(mockSetCurrentWorkingDirectory).toHaveBeenCalledWith(['dir0']);
+        expect(mockOnDirectoryLinkClick).toHaveBeenCalledTimes(2);
+        expect(mockOnDirectoryLinkClick).toHaveBeenCalledWith(['dir0']);
     });
 });

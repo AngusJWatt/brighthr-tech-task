@@ -17,6 +17,12 @@ function App() {
       /* Opted to have case-insensitive searches, can be removed. */
       setFilterRegex(new RegExp(`^(${inputText.replace(/([\*\.\+\*\?\^\$\(\)\[\]\{\}\|\\])/g, "\\$1")})`, "i"));
   };
+  const handleDirectoryLinkClick = (updatedFilepath: string[]) => {
+    setCWDFilePath(updatedFilepath);
+    /* Removes filtering after a link has been clicked, so that filtering is not applied over multiple links. */
+    setFilterRegex(/^()/i);
+    setSearchText('');
+  };
 
   useEffect(() => {
     getFiles().then(files => {
@@ -41,14 +47,14 @@ function App() {
           labelText="Current directory:"
           rootName="HOME"
           currentWorkingDirectory={cwdFilePath}
-          setCurrentWorkingDirectory={setCWDFilePath} />
+          onDirectoryLinkClick={handleDirectoryLinkClick} />
         <SearchBar searchText={searchText} onInputValueChange={onInputValueChange} />
         <DirectoryTable
           caption="List of matching files"
           filterRegex={filterRegex}
           files={cwdFiles}
           filePath={cwdFilePath}
-          openDirectory={setCWDFilePath}
+          onDirectoryLinkClick={handleDirectoryLinkClick}
         />
       </section>
     </div>

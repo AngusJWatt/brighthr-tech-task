@@ -2,12 +2,12 @@ const ROOT_STRING = 'HOME';
 
 type CWDListProps = {
     currentWorkingDirectory: string[];
-    setCurrentWorkingDirectory: (updatedWorkingDirectory: string[]) => void;
+    onDirectoryLinkClick: (updatedFilepath: string[]) => void;
     rootName: string;
     labelText: string;
 };
 
-export const CWDList = ({ currentWorkingDirectory, setCurrentWorkingDirectory, rootName, labelText }: CWDListProps) => (
+export const CWDList = ({ currentWorkingDirectory, onDirectoryLinkClick, rootName, labelText }: CWDListProps) => (
     <p data-testid="cwd-list">
         {labelText}&nbsp;{currentWorkingDirectory.length > 0 ?
         currentWorkingDirectory.reduce(
@@ -15,11 +15,11 @@ export const CWDList = ({ currentWorkingDirectory, setCurrentWorkingDirectory, r
                 const isLink = ind < currentWorkingDirectory.length - 1;
                 const Wrapper = isLink ? 'button' : 'span';
                 const linkProps = isLink
-                    ? { onClick: () => setCurrentWorkingDirectory(currentWorkingDirectory.slice(0, ind + 1)) }
+                    ? { onClick: () => onDirectoryLinkClick(currentWorkingDirectory.slice(0, ind + 1)) }
                     : {};
                 return (<>{acc}&nbsp;/&nbsp;<Wrapper {...linkProps}>{val}</Wrapper></>)
             }, 
-            <button onClick={() => setCurrentWorkingDirectory([])}>{rootName}</button>
+            <button onClick={() => onDirectoryLinkClick([])}>{rootName}</button>
         ) : rootName }
     </p>
 );
