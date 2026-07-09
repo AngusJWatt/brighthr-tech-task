@@ -47,5 +47,15 @@
                 "added": "2015-04-24"
             }
         ]
+    },
+    {
+        "type": "jpg",
+        "name": "My Family",
+        "added": "2017-01-06"
+    },
+    {
+        "type": "png",
+        "name": "My Family",
+        "added": "2017-01-06"
     }
 ]
