@@ -6,12 +6,13 @@ import { DirectoryTable } from './components/DirectoryTable';
 import { getFiles } from './functions/getFiles';
 import type { Directory, FileNode } from './types';
 
-function App() {
+const App = () => {
   const allFiles = useRef([] as FileNode[]);
   const [cwdFilePath, setCWDFilePath] = useState([] as string[]);
   const [cwdFiles, setCWDFiles] = useState([] as FileNode[]);
   const [filterRegex, setFilterRegex] = useState(/^()/i);
   const [searchText, setSearchText] = useState('');
+  const [errorText, setErrorText] = useState('');
   const onInputValueChange = (inputText: string): void => {
       setSearchText(inputText);
       /* Opted to have case-insensitive searches, can be removed. */
@@ -28,7 +29,7 @@ function App() {
     getFiles().then(files => {
       allFiles.current = files;
       setCWDFiles(files);
-    }).catch(e => console.error(e));
+    }).catch(err => setErrorText(err.message));
   }, []);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
     <div className="App">
       <h1>Angi Watt's BrightHR File Reader</h1>
       <section>
+        {errorText && <div role="alert">{errorText}</div>}
         <CWDList
           labelText="Current directory:"
           rootName="HOME"

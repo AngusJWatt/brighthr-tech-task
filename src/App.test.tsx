@@ -165,7 +165,6 @@ describe('App', () => {
     });
   });
 
-  it.todo('shows a message to the user when a directory is empty');
-
+  /* Unable to complete due to similar issue seen in getFiles.test.tsx. Cannot trigger error without tripping test. */
   it.todo('renders an error when there is a problem fetching contents');
 });

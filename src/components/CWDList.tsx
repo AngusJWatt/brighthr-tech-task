@@ -1,5 +1,3 @@
-const ROOT_STRING = 'HOME';
-
 type CWDListProps = {
     currentWorkingDirectory: string[];
     onDirectoryLinkClick: (updatedFilepath: string[]) => void;
@@ -8,7 +6,7 @@ type CWDListProps = {
 };
 
 export const CWDList = ({ currentWorkingDirectory, onDirectoryLinkClick, rootName, labelText }: CWDListProps) => (
-    <p data-testid="cwd-list">
+    <p data-testid="cwd-list" aria-live="polite">
         {labelText}&nbsp;{currentWorkingDirectory.length > 0 ?
         currentWorkingDirectory.reduce(
             (acc, val, ind) => {
