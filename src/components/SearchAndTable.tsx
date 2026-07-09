@@ -14,10 +14,21 @@ type SearchAndTableProps = {
 export const SearchAndTable = ({ tableCaption, files, filePath, openDirectory }: SearchAndTableProps) => {
     const [filterRegex, setFilterRegex] = useState(/^()/i);
 
+    const onInputValue = (inputText: string) => {
+        /* Opted to have case-insensitive searches, can be removed. */
+        setFilterRegex(new RegExp(`^(${inputText.replace(/([\*\.\+\*\?\^\$\(\)\[\]\{\}\|\\])/g, "\\$1")})`, "i"));
+    };
+
     return (
         <>
-            <SearchBar setRegex={setFilterRegex} />
-            <DirectoryTable caption={tableCaption} filterRegex={filterRegex} files={files} filePath={filePath} openDirectory={openDirectory} />
+            <SearchBar onInputValue={onInputValue} />
+            <DirectoryTable
+                caption={tableCaption}
+                filterRegex={filterRegex}
+                files={files}
+                filePath={filePath}
+                openDirectory={openDirectory}
+            />
         </>
     );
 };

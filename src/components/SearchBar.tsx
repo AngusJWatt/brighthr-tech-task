@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 
-type SearchBarProps = { setRegex: (regex: RegExp) => void; };
+type SearchBarProps = { onInputValue: (inputValue: string) => void; };
 
-export const SearchBar = ({ setRegex }: SearchBarProps) => {
+export const SearchBar = ({ onInputValue }: SearchBarProps) => {
     const [inputText, setInputText] = useState('');
     const handleChange = (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
         const { value } = event.target;
-        /* Opted to have case-insensitive searches, can be removed. */
-        setRegex(new RegExp(`^(${value.replace(/([\*\.\+\*\?\^\$\(\)\[\]\{\}\|\\])/g, "\\$1")})`, "i"));
+        onInputValue(value);
         setInputText(value);
     };
     const removeFilter = () => {
-        setRegex(/^()/i);
+        onInputValue('');
         setInputText('');
     };
 
