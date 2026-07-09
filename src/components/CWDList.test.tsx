@@ -11,21 +11,36 @@ describe('CWDList', () => {
     });
 
     it('renders a corresponding series of directories when provided with a current working directory list', () => {
-        render(<CWDList currentWorkingDirectory={['dir0', 'dir1']} setCurrentWorkingDirectory={jest.fn()} />);
+        render(<CWDList 
+            currentWorkingDirectory={['dir0', 'dir1']}
+            setCurrentWorkingDirectory={jest.fn()}
+            rootName="HOME"
+            labelText="CWD:"
+        />);
         const cwdList = screen.getByTestId('cwd-list');
         expect(cwdList).toHaveTextContent('HOME / dir0 / dir1');
         ;
     });
 
-    it('renders only HOME when the list of directories is empty', () => {
-        render(<CWDList currentWorkingDirectory={[]} setCurrentWorkingDirectory={jest.fn()} />);
+    it('renders only rootName when the list of directories is empty', () => {
+        render(<CWDList
+            currentWorkingDirectory={[]}
+            setCurrentWorkingDirectory={jest.fn()}
+            rootName="HOME"
+            labelText="CWD:"
+        />);
         const cwdList = screen.getByTestId('cwd-list');
-        expect(cwdList).toHaveTextContent('HOME');
-        expect(cwdList).not.toHaveTextContent('HOME /');
+        expect(cwdList).toHaveTextContent('CWD: HOME');
+        expect(cwdList).not.toHaveTextContent('CWD: HOME /');
     });
 
     it('renders all except the last directory as a clickable link', () => {
-        render(<CWDList currentWorkingDirectory={['dir0', 'dir1']} setCurrentWorkingDirectory={jest.fn()} />);
+        render(<CWDList
+            currentWorkingDirectory={['dir0', 'dir1']}
+            setCurrentWorkingDirectory={jest.fn()}
+            rootName="HOME"
+            labelText="CWD:"
+        />);
         const buttons = screen.getAllByRole('button');
         expect(buttons.length).toBe(2);
         expect(buttons[0]).toHaveTextContent('HOME');
@@ -34,7 +49,9 @@ describe('CWDList', () => {
 
     it('runs a callback with a new corresponding working directory list when a link is pressed', () => {
         const mockSetCurrentWorkingDirectory = jest.fn();
-        render(<CWDList 
+        render(<CWDList
+            labelText="CWD:"
+            rootName="HOME"
             currentWorkingDirectory={['dir0', 'dir1']}
             setCurrentWorkingDirectory={mockSetCurrentWorkingDirectory}
         />);

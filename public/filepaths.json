@@ -45,7 +45,19 @@
                 "type": "mov",
                 "name": "Welcome to the company!",
                 "added": "2015-04-24"
-            }
+            },
+            {
+                "type": "folder",
+                "name": "Notes",
+                "files":
+                [
+                    {
+                        "type": "rtf",
+                        "name": "Things to do on holiday",
+                        "added": "2015-12-06"
+                    }
+        ]
+    }
         ]
     },
     {

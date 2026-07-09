@@ -35,7 +35,7 @@ function App() {
     <div className="App">
       <h1>Angi Watt's BrightHR File Reader</h1>
       <section>
-        <CWDList currentWorkingDirectory={cwdFilePath} setCurrentWorkingDirectory={setCWDFilePath} />
+        <CWDList labelText="Current directory:" rootName="HOME"  currentWorkingDirectory={cwdFilePath} setCurrentWorkingDirectory={setCWDFilePath} />
         <SearchBar onInputValue={onInputValue} />
         <DirectoryTable
           caption="List of matching files"
