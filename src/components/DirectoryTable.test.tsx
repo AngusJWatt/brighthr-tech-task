@@ -15,9 +15,9 @@ describe('DirectoryTable', () => {
     const sharedTestProps = { 
         caption: 'Test heading',
         files: [
-            { nodeName: 'Public Holiday policy', nodeType: 'pdf', added: new Date(Date.UTC(2016, 11, 6)) },
-            { nodeName: 'Expenses', nodeType: 'folder', files: [] },
-            { nodeName: 'Cost centres', nodeType: 'csv', added: new Date(2016, 7, 12) }
+            { name: 'Public Holiday policy', type: 'pdf', added: '2016-12-06' },
+            { name: 'Expenses', type: 'folder', files: [] },
+            { name: 'Cost centres', type: 'csv', added: '2016-08-12' }
         ],
         filePath: ['dir0', 'dir1'],
         openFile: jest.fn(),
@@ -50,7 +50,7 @@ describe('DirectoryTable', () => {
         
         expect(file0Elements.getByRole('rowheader')).toHaveTextContent('Public Holiday policy');
         expect(file0Elements.getAllByRole('cell')[0]).toHaveTextContent('pdf');
-        expect(file0Elements.getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
+        expect(file0Elements.getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
         expect(file0Elements.getAllByRole('cell')[2]).toHaveTextContent('\u2014');
         
         const folderElements = within(rows[2]);
@@ -64,7 +64,7 @@ describe('DirectoryTable', () => {
         
         expect(file1Elements.getByRole('rowheader')).toHaveTextContent('Cost centres');
         expect(file1Elements.getAllByRole('cell')[0]).toHaveTextContent('csv');
-        expect(file1Elements.getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
+        expect(file1Elements.getAllByRole('cell')[1]).toHaveTextContent('2016-08-12');
         expect(file0Elements.getAllByRole('cell')[2]).toHaveTextContent('\u2014');
     });
 
@@ -138,9 +138,9 @@ describe('DirectoryTable', () => {
         const dateHeader = screen.getByRole('columnheader', { name: 'Date added (Click to sort)' });
         const dateButton = screen.getByRole('button', { name: 'Date added (Click to sort)' });
 
-        expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
+        expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
         expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('\u2014');
-        expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
+        expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('2016-08-12');
 
         userEvent.click(dateButton);
 
@@ -149,8 +149,8 @@ describe('DirectoryTable', () => {
 
             const rows = screen.getAllByRole('row');
 
-            expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
-            expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
+            expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('2016-08-12');
+            expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
             expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('\u2014');
         });
     });
@@ -174,8 +174,8 @@ describe('DirectoryTable', () => {
 
             const rows = screen.getAllByRole('row');
 
-            expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
-            expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
+            expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
+            expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('2016-08-12');
             expect(within(rows[3]).getAllByRole('cell')[1]).toHaveTextContent('\u2014');
         });
     });
@@ -270,7 +270,7 @@ describe('DirectoryTable', () => {
 
         const rows = screen.getAllByRole('row');
 
-        expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('12/08/2016');
-        expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('06/12/2016');
+        expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('2016-08-12');
+        expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
     });
 });

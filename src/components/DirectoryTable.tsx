@@ -12,23 +12,29 @@ type DirectoryTableProps = {
 };
 
 const filterNodes = (nodeList: FileNode[], filterRegex: RegExp):FileNode[] => {
-    return nodeList.filter(({ nodeName, nodeType }) => {
-        const fullName: string = nodeType === 'folder' ? nodeName : `${nodeName}.${nodeType}`;
+    return nodeList.filter(({ name, type: nodeType }) => {
+        const fullName: string = nodeType === 'folder' ? name : `${name}.${nodeType}`;
         return filterRegex.test(fullName); 
     });
 };
 const sortNames = (nodeArray: FileNode[], shouldInvert: boolean) => {
     const signedFactor = shouldInvert ? -1 : 1;
-    return nodeArray.sort((nodeA, nodeB) => signedFactor * nodeA.nodeName.localeCompare(nodeB.nodeName));
+    return nodeArray.sort((nodeA, nodeB) => signedFactor * nodeA.name.localeCompare(nodeB.name));
 };
+const getTime = (dateString: string | undefined, fallback: number): number => {
+    const datesArray = dateString?.split('-').map(str => Number(str)) || [];
+    const addedDate = new Date(datesArray[0], datesArray[1], datesArray[2]);
+    return addedDate.getTime() || fallback;
+}
 const sortDates = (nodeArray: FileNode[], shouldInvert: boolean) => {
     const signedFactor = shouldInvert ? -1 : 1;
     return nodeArray.sort((nodeA, nodeB) => {
+
         /* Value of signedFactor * Infinity keeps nodes without added dates at the bottom. Can be switched to 
          * signedFactor * -Infinity if they should be at the top, or else removed entirely if this behaviour is
          * undesirable. */
-        const nodeATime = nodeA.added?.getTime() || signedFactor * Infinity;
-        const nodeBTime = nodeB.added?.getTime() || signedFactor * Infinity;
+        const nodeATime = getTime(nodeA.added, signedFactor * Infinity);
+        const nodeBTime = getTime(nodeB.added, signedFactor * Infinity);
         return signedFactor * (nodeATime - nodeBTime || 0);
     });
 };
@@ -81,15 +87,15 @@ export const DirectoryTable = ({ caption, files, filterRegex, filePath, openDire
                 </tr>
             </thead>
             <tbody aria-live="polite">
-                {nodesList.map(({ nodeName, nodeType, added }) => (
-                    /* nodeName.nodeType should be a unique value for a key, as any two files in the same directory
+                {nodesList.map(({ name, type: nodeType, added }) => (
+                    /* name.nodeType should be a unique value for a key, as any two files in the same directory
                      * sharing the same name and extension should be forbidden in any UNIX-like system */
-                    <tr key={`${nodeName}.${nodeType}`}>
-                        <th scope="row">{nodeName}</th>
+                    <tr key={`${name}.${nodeType}`}>
+                        <th scope="row">{name}</th>
                         <td>{nodeType}</td>
-                        <td>{added?.toLocaleDateString("en-GB") || (<span aria-hidden="true">&mdash;</span>)}</td>
+                        <td>{added || (<span aria-hidden="true">&mdash;</span>)}</td>
                         <td>{nodeType === 'folder'
-                            ? (<button onClick={() => {openDirectory([...filePath, nodeName])}}>Open</button>)
+                            ? (<button onClick={() => {openDirectory([...filePath, name])}}>Open</button>)
                             : (<span aria-hidden="true">&mdash;</span>)
                         }</td>
                     </tr>
