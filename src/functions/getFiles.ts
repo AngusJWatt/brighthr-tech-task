@@ -19,18 +19,15 @@ const formatFiles = (filenodes: FileNode[]) =>
     }, [] as FileNode[]);
 
 export const getFiles = async (): Promise<FileNode[]> => {
-    const response = await fetch('../../public/fetch');
+    const response = await fetch('filepaths.json');
     if (!response.ok) {
         throw new Error('Unable to fetch files');
     }
     let files = [];
     try {
-        const data = await response.json();
-        files = JSON.parse(data);
+        files = await response.json();
+        console.log(files, typeof files, Array.isArray(files));
     } catch (_) {
-        throw new Error('Response not correctly formatted');
-    }
-    if (!Array.isArray(files)) {
         throw new Error('Response not correctly formatted');
     }
     return formatFiles(files) as FileNode[];

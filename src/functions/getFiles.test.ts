@@ -22,7 +22,7 @@ describe('getFiles', () => {
 
     it('formats files and folders recursively', async () => {
         jest.spyOn(global, 'fetch').mockImplementation((): any =>
-            Promise.resolve({ json: () => Promise.resolve(JSON.stringify(mockData)), ok: true })
+            Promise.resolve({ json: () => Promise.resolve(mockData), ok: true })
         );
 
         const data = await getFiles();
@@ -37,11 +37,11 @@ describe('getFiles', () => {
 
     it('removes any directory that does not have a name or correctly-formatted files property', async () => {
         jest.spyOn(global, 'fetch').mockImplementation((): any =>
-            Promise.resolve({ json: () => Promise.resolve(JSON.stringify([ 
+            Promise.resolve({ json: () => Promise.resolve([ 
                 ...mockData,
                 { type: 'folder', name: 'Whoops, something went wrong', files: 'Where did the files go?' },
                 { type: 'folder', name: '', files: [] }
-            ])), ok: true })
+            ]), ok: true })
         );
 
         const data = await getFiles();
@@ -51,10 +51,9 @@ describe('getFiles', () => {
     /* Opted not to remove files without a type, as they can be untyped if they are executables. */
     it('removes any file that does not have a name', async () => {
         jest.spyOn(global, 'fetch').mockImplementation((): any =>
-            Promise.resolve({ json: () => Promise.resolve(JSON.stringify([ 
-                ...mockData,
-                { type: 'docx', name: '', added: '12-03-06' }
-            ])), ok: true })
+            Promise.resolve({
+                json: () => Promise.resolve([ ...mockData, { type: 'docx', name: '', added: '12-03-06' }]), ok: true
+            })
         );
 
         const data = await getFiles();

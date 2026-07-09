@@ -68,7 +68,7 @@ export const DirectoryTable = ({ caption, files, filterRegex, filePath, openDire
             sortDates(filteredFiles, dateSort === SortOrdering.Descending);
         }
         setNodesList(filteredFiles);
-    }, [files, filterRegex]);
+    }, [files, filterRegex, dateSort, nameSort]);
 
     return (
         <table>
