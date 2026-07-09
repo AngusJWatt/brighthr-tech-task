@@ -26,7 +26,6 @@ export const getFiles = async (): Promise<FileNode[]> => {
     let files = [];
     try {
         files = await response.json();
-        console.log(files, typeof files, Array.isArray(files));
     } catch (_) {
         throw new Error('Response not correctly formatted');
     }
