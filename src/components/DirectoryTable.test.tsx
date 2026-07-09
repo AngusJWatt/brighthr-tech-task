@@ -22,7 +22,8 @@ describe('DirectoryTable', () => {
         filePath: ['dir0', 'dir1'],
         openFile: jest.fn(),
         onDirectoryLinkClick: jest.fn(),
-        filterRegex: new RegExp("")
+        filterRegex: new RegExp(""),
+        emptyMessage: 'No files in this directory'
     };
 
     it('renders a table with a caption, and headings for name, type, creation date, and a clickable link', () => {
@@ -272,5 +273,12 @@ describe('DirectoryTable', () => {
 
         expect(within(rows[1]).getAllByRole('cell')[1]).toHaveTextContent('2016-08-12');
         expect(within(rows[2]).getAllByRole('cell')[1]).toHaveTextContent('2016-12-06');
+    });
+
+    it('renders a message to users if there are no files passed in', () => {
+        render(<DirectoryTable {...sharedTestProps} files={[]} />);
+
+        const emptyTextHeader = within(screen.getAllByRole('row')[1]).getByRole('rowheader');
+        expect(emptyTextHeader).toHaveTextContent('No files in this directory');
     });
 });

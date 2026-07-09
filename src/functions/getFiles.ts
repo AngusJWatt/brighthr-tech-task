@@ -20,11 +20,14 @@ const formatFiles = (filenodes: FileNode[]) =>
 
 export const getFiles = async (): Promise<FileNode[]> => {
     const response = await fetch('filepaths.json');
+    /* To test the effect of a response error, set this to if (response.ok) */
     if (!response.ok) {
         throw new Error('Unable to fetch files, URL response not OK. Please try again later.');
     }
     let files = [];
     try {
+        /* To test the effect of a formatting error, throw an error here. */
+        throw new Error();
         files = await response.json();
     } catch (_) {
         throw new Error('Unable to open files, response not correctly formatted. Please contact your administrator.');

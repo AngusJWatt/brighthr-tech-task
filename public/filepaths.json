@@ -56,8 +56,13 @@
                         "name": "Things to do on holiday",
                         "added": "2015-12-06"
                     }
-        ]
-    }
+                ]
+            },
+            {
+                "type": "folder",
+                "name": "Empty",
+                "files": []
+            }
         ]
     },
     {

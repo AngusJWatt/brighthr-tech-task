@@ -13,6 +13,7 @@ const App = () => {
   const [filterRegex, setFilterRegex] = useState(/^()/i);
   const [searchText, setSearchText] = useState('');
   const [errorText, setErrorText] = useState('');
+  const [emptyMessage, setEmptyMessage] = useState('Fetching files, please wait.');
   const onInputValueChange = (inputText: string): void => {
       setSearchText(inputText);
       /* Opted to have case-insensitive searches, can be removed. */
@@ -29,7 +30,10 @@ const App = () => {
     getFiles().then(files => {
       allFiles.current = files;
       setCWDFiles(files);
-    }).catch(err => setErrorText(err.message));
+    }).catch(err => {
+      setErrorText(err.message)
+      setEmptyMessage('Unable to show files.')
+    });
   }, []);
 
   useEffect(() => {
@@ -57,6 +61,7 @@ const App = () => {
           files={cwdFiles}
           filePath={cwdFilePath}
           onDirectoryLinkClick={handleDirectoryLinkClick}
+          emptyMessage={emptyMessage}
         />
       </section>
     </div>

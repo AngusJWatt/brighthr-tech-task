@@ -9,6 +9,7 @@ type DirectoryTableProps = {
     filterRegex: RegExp;
     filePath: string[];
     onDirectoryLinkClick: (updatedFilepath: string[]) => void;
+    emptyMessage: string;
 };
 
 const filterNodes = (nodeList: FileNode[], filterRegex: RegExp):FileNode[] => {
@@ -38,7 +39,7 @@ const sortDates = (nodeArray: FileNode[], shouldInvert: boolean) => {
     });
 };
 
-export const DirectoryTable = ({ caption, files, filterRegex, filePath, onDirectoryLinkClick }: DirectoryTableProps) => {
+export const DirectoryTable = ({ caption, files, filterRegex, filePath, onDirectoryLinkClick, emptyMessage }: DirectoryTableProps) => {
     const [nodesList, setNodesList] = useState(filterNodes(files, filterRegex));
     const [nameSort, setNameSort] = useState(SortOrdering.Other);
     const [dateSort, setDateSort] = useState(SortOrdering.Other);
@@ -86,7 +87,8 @@ export const DirectoryTable = ({ caption, files, filterRegex, filePath, onDirect
                 </tr>
             </thead>
             <tbody aria-live="polite">
-                {nodesList.map(({ name, type: nodeType, added }) => (
+                {nodesList.length > 0
+                ? nodesList.map(({ name, type: nodeType, added }) => (
                     /* name.nodeType should be a unique value for a key, as any two files in the same directory
                      * sharing the same name and extension should be forbidden in any UNIX-like system */
                     <tr key={`${name}.${nodeType}`}>
@@ -98,7 +100,8 @@ export const DirectoryTable = ({ caption, files, filterRegex, filePath, onDirect
                             : (<span aria-hidden="true">&mdash;</span>)
                         }</td>
                     </tr>
-                ))}
+                ))
+                : (<tr><th scope="row">{emptyMessage}</th><td/><td/><td/></tr>)}
             </tbody>
         </table>
     )
