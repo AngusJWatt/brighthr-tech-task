@@ -29,7 +29,6 @@ const getTime = (dateString: string | undefined, fallback: number): number => {
 const sortDates = (nodeArray: FileNode[], shouldInvert: boolean) => {
     const signedFactor = shouldInvert ? -1 : 1;
     return nodeArray.sort((nodeA, nodeB) => {
-
         /* Value of signedFactor * Infinity keeps nodes without added dates at the bottom. Can be switched to 
          * signedFactor * -Infinity if they should be at the top, or else removed entirely if this behaviour is
          * undesirable. */
