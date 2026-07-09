@@ -1,5 +1,6 @@
 import { render, screen, waitFor, within, cleanup } from '@testing-library/react';
 import * as getFilesModule from './functions/getFiles';
+import * as DirectoryTableModule from './components/DirectoryTable';
 
 import App from './App';
 import { FileNode } from './types';
@@ -7,13 +8,13 @@ import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
   beforeEach(() => {
-        cleanup();
-    });
+    cleanup();
+  });
 
-    afterAll(() => {
-        jest.restoreAllMocks();
-        cleanup();
-    });
+  afterAll(() => {
+    jest.restoreAllMocks();
+    cleanup();
+  });
 
   it('fetches data from the mocked API and populates the table with its first layer of files', async () => {
     jest.spyOn(getFilesModule, 'getFiles').mockImplementation((): Promise<FileNode[]> => 
@@ -76,7 +77,57 @@ describe('App', () => {
     });
   });
 
-  it.todo('clears the search bar after clicking a new directory link, ');
+  it('filters results in the Directory table to reflect the input into the SearchBar', async () => {
+    jest.spyOn(getFilesModule, 'getFiles').mockImplementation((): Promise<FileNode[]> => 
+      Promise.resolve([
+        { name: 'Public Holiday policy', type: 'pdf', added: '2016-12-06' },
+        { name: 'Expenses', type: 'folder', files: [] },
+        { name: 'Cost centres', type: 'csv', added: '2016-08-12' }
+      ])
+    );
+
+    render(<App />);
+    const input = screen.getByRole('textbox');
+    let rows: HTMLElement[] = [];
+    
+    await waitFor(() => {
+      rows = screen.getAllByRole('row');
+
+      expect(rows.length).toBe(4);
+    });
+
+    userEvent.type(input, 'C');
+
+    await waitFor(() => {
+      let rows = screen.getAllByRole('row');
+
+      expect(rows.length).toBe(2);
+      expect(within(rows[1]).getByRole('rowheader')).toHaveTextContent('Cost centres');
+    });
+  });
+
+  it('escapes regex special characters to prevent accidental regex behaviour', async () => {
+    const mockDirectoryTable = jest.fn()
+    jest.spyOn(DirectoryTableModule, 'DirectoryTable').mockImplementation(
+      (props): any => mockDirectoryTable(props)
+    );
+    jest.spyOn(getFilesModule, 'getFiles').mockImplementation((): Promise<FileNode[]> => Promise.resolve([]));
+
+    render(<App />);
+
+    const input = screen.getByRole('textbox');
+
+    userEvent.type(input, 'Me + Pepper (my dog).jpg');
+
+    await waitFor(() => {
+      expect(input).toHaveValue('Me + Pepper (my dog).jpg');
+      expect(mockDirectoryTable).toHaveBeenCalledWith(
+        expect.objectContaining({ filterRegex: /^(Me \+ Pepper \(my dog\)\.jpg)/i })
+      );
+    });
+  });
+
+  it.todo('clears the search bar after clicking a new directory link');
 
   it.todo('shows a message to the user when a directory is empty');
 
