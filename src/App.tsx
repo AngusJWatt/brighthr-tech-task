@@ -30,6 +30,7 @@ const App = () => {
     getFiles().then(files => {
       allFiles.current = files;
       setCWDFiles(files);
+      setEmptyMessage('There are no files in this directory.')
     }).catch(err => {
       setErrorText(err.message)
       setEmptyMessage('Unable to show files.')
