@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import type { FileNode } from '../types';
 
 enum SortOrdering { Ascending = 'ascending', Descending = 'descending', Other = 'other' };
 
-type File = { nodeName: string; nodeType: string; added: Date; };
-type Directory = { nodeName: string; nodeType: string; files: (File | Directory)[]; added?: undefined; };
-type FileNode = File | Directory;
 type DirectoryTableProps = {
     caption: string;
     files: FileNode[];

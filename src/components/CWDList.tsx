@@ -1,11 +1,11 @@
 const ROOT_STRING = 'HOME';
 
-type CWDProps = {
+type CWDListProps = {
     currentWorkingDirectory: string[];
     setCurrentWorkingDirectory: (updatedWorkingDirectory: string[]) => void;
 };
 
-export const CWDList = ({ currentWorkingDirectory, setCurrentWorkingDirectory }: CWDProps) => (
+export const CWDList = ({ currentWorkingDirectory, setCurrentWorkingDirectory }: CWDListProps) => (
     <p data-testid="cwd-list">
         {currentWorkingDirectory.length > 0 ?
         currentWorkingDirectory.reduce(
