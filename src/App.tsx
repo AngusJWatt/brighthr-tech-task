@@ -11,7 +11,9 @@ function App() {
   const [cwdFilePath, setCWDFilePath] = useState([] as string[]);
   const [cwdFiles, setCWDFiles] = useState([] as FileNode[]);
   const [filterRegex, setFilterRegex] = useState(/^()/i);
-  const onInputValue = (inputText: string) => {
+  const [searchText, setSearchText] = useState('');
+  const onInputValueChange = (inputText: string): void => {
+      setSearchText(inputText);
       /* Opted to have case-insensitive searches, can be removed. */
       setFilterRegex(new RegExp(`^(${inputText.replace(/([\*\.\+\*\?\^\$\(\)\[\]\{\}\|\\])/g, "\\$1")})`, "i"));
   };
@@ -35,8 +37,12 @@ function App() {
     <div className="App">
       <h1>Angi Watt's BrightHR File Reader</h1>
       <section>
-        <CWDList labelText="Current directory:" rootName="HOME"  currentWorkingDirectory={cwdFilePath} setCurrentWorkingDirectory={setCWDFilePath} />
-        <SearchBar onInputValue={onInputValue} />
+        <CWDList
+          labelText="Current directory:"
+          rootName="HOME"
+          currentWorkingDirectory={cwdFilePath}
+          setCurrentWorkingDirectory={setCWDFilePath} />
+        <SearchBar searchText={searchText} onInputValueChange={onInputValueChange} />
         <DirectoryTable
           caption="List of matching files"
           filterRegex={filterRegex}

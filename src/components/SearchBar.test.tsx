@@ -1,4 +1,4 @@
-import { render, screen, cleanup, waitFor } from '@testing-library/react'
+import { render, screen, cleanup, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 
 import { SearchBar } from './SearchBar';
@@ -12,37 +12,31 @@ describe('SearchBar', () => {
         cleanup();
     });
 
-    it('takes input from the user which is passed into a callback for filtering files', async () => {
-        const onInputValue = jest.fn();
-        render(<SearchBar onInputValue={onInputValue} />);
+    it('reflects the value of searchText in the input textbox', async () => {
+        const onInputValueChange = jest.fn();
+        render(<SearchBar searchText='Hello' onInputValueChange={onInputValueChange} />);
         const input = screen.getByRole('textbox');
 
-        userEvent.type(input, 'Hello');
-
-        await waitFor(() => {
-            expect(input).toHaveValue('Hello');
-            expect(onInputValue).toHaveBeenCalledWith('Hello');
-        });
+        expect(input).toHaveValue('Hello');
     });
 
-    it('removes the contents of the search bar and clears the regex when the cancel button is clicked', async () => {
-        const onInputValue = jest.fn();
-        render(<SearchBar onInputValue={onInputValue}/>);
+    it('takes input from the user which is passed into the callback for filtering files', async () => {
+        const onInputValueChange = jest.fn();
+        render(<SearchBar searchText='' onInputValueChange={onInputValueChange} />);
         const input = screen.getByRole('textbox');
+
+        fireEvent.change(input, { target: { value: 'Hello' } });
+        
+        expect(onInputValueChange).toHaveBeenCalledWith('Hello');
+    });
+
+    it('passes an empty string into the callback to when the cancel button is clicked', () => {
+        const onInputValueChange = jest.fn();
+        render(<SearchBar searchText='' onInputValueChange={onInputValueChange} />);
         const closeButton = screen.getByRole('button', { name: 'Remove filter' });
 
-        userEvent.type(input, 'Hello');
-
-        await waitFor(() => {
-            expect(onInputValue).toHaveBeenCalledWith('Hello');
-            
-        });
-        
         userEvent.click(closeButton);
 
-        await waitFor(() => {
-            expect(input).toHaveValue('');
-            expect(onInputValue).toHaveBeenCalledWith('');
-        });
+        expect(onInputValueChange).toHaveBeenCalledWith('');
     });
 });
