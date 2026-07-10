@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 type SearchBarProps = {
     searchText: string;
     onInputValueChange: (inputText: string) => void;
