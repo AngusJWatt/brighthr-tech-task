@@ -6,7 +6,13 @@ https://github.com/brighthr/Front-End-Tech-Tasks/blob/main/junior-and-middleweig
 I pledge that all the work produced here is written entirely using my own knowledge and openly-available documentation,
 and made without the use of generative AI.
 
+## Viewing deployment
+
+This app has been deployed via Github Pages, and should be viewable from
+[https://angusjwatt.github.io/brighthr-tech-task/](https://angusjwatt.github.io/brighthr-tech-task/).
+
 ## How to run
 
 To run this code, pull this repository and run the command `npm start`, which will open the app in development mode in
-the browser at [http://localhost:3000](http://localhost:3000).
+the browser at [http://localhost:3000](http://localhost:3000). To change which files are being shown, alter them from
+`/public/filepaths.json`.
