@@ -62,5 +62,9 @@ scalable. Ideally, I would like to investigate ways to minimise the amount of fi
 page, maybe by fetching and caching only nodes nearby to the current directory and its parents back to HOME.\ 
 There is currently no behaviour for emulating symlinks, which might be nice to have. These could be treated in just the
 same way as navigating to a directory.\
-Finally, the app is not very pretty. I would maybe have liked to have consulted with someone with more flair for
+I would have liked to have structured my components in an MVC structure, and implemented the dependency-inversion
+principle more rigourously. I was sometimes over-eager to implement structures in lower components before the components
+that imported them required it, meaning some hefty refactors which often required disentangling logical elements from
+presentational ones.\
+Finally, the app is not very pretty. I would maybe have liked to have consulted with someone with more flare for
 decoration on how best to style the app.
