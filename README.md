@@ -66,5 +66,7 @@ I would have liked to have structured my components in an MVC structure, and imp
 principle more rigourously. I was sometimes over-eager to implement structures in lower components before the components
 that imported them required it, meaning some hefty refactors which often required disentangling logical elements from
 presentational ones.\
-Finally, the app is not very pretty. I would maybe have liked to have consulted with someone with more flare for
+I would like to have discussed with people well-versed in accessibility on where to put focus after the page content has
+updated, with the updating and removal of clicked buttons causing focus to move to the top of the document by default./
+Finally, the app is not very pretty. I would maybe have liked to have consulted with someone with more flair for
 decoration on how best to style the app.

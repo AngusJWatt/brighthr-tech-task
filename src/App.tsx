@@ -7,9 +7,9 @@ import { getFiles } from './functions/getFiles';
 import type { Directory, FileNode } from './types';
 
 const App = () => {
-  const allFiles = useRef([] as FileNode[]);
-  const [cwdFilePath, setCWDFilePath] = useState([] as string[]);
-  const [cwdFiles, setCWDFiles] = useState([] as FileNode[]);
+  const allFiles = useRef<FileNode[]>([]);
+  const [cwdFilePath, setCWDFilePath] = useState<string[]>([]);
+  const [cwdFiles, setCWDFiles] = useState<FileNode[]>([]);
   const [filterRegex, setFilterRegex] = useState(/^()/i);
   const [searchText, setSearchText] = useState('');
   const [errorText, setErrorText] = useState('');

@@ -12,7 +12,7 @@ type DirectoryTableProps = {
     emptyMessage: string;
 };
 
-const filterNodes = (nodeList: FileNode[], filterRegex: RegExp):FileNode[] => {
+const filterNodes = (nodeList: FileNode[], filterRegex: RegExp): FileNode[] => {
     return nodeList.filter(({ name, type: nodeType }) => {
         const fullName: string = nodeType === 'folder' ? name : `${name}.${nodeType}`;
         return filterRegex.test(fullName); 

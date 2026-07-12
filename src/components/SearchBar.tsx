@@ -4,7 +4,7 @@ type SearchBarProps = {
 };
 
 export const SearchBar = ({ searchText, onInputValueChange }: SearchBarProps) => {
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>): void => {
         const { value } = event.target;
         onInputValueChange(value);
     };
